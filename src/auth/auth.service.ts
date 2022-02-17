@@ -7,8 +7,8 @@ import { JwtService } from '@nestjs/jwt';
 export class AuthService {
   constructor(private prisma: PrismaService, private jwtService: JwtService) {}
 
-  async signIn(email: string): Promise<{ accessToken: string }> {
-    const payload = { email };
+  async signIn(email: string, id: number): Promise<{ accessToken: string }> {
+    const payload = { email, id };
     const accessToken = this.jwtService.sign(payload);
 
     return { accessToken };
