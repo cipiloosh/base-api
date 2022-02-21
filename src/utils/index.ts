@@ -1,4 +1,5 @@
 import sendMail from './sendMail';
-import { encrypt, decrypt } from './encrypt';
+import crypto from './encrypt';
+import isProd from './isProd';
 
-export { sendMail, encrypt, decrypt };
+export { sendMail, crypto, isProd };
