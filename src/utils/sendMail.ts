@@ -21,12 +21,11 @@ const sendMail = async (email: string, subject: string, message: string) => {
       },
     });
 
-    const response = await transporter.sendMail({
+    await transporter.sendMail({
       from: SENDER_EMAIL_ADDRESS,
       to: email,
       subject,
-      text: message,
-      // html: '<b>Hello world?</b>', // html body
+      html: message,
     });
     return { status: 200 };
   } catch (error) {
