@@ -1,6 +1,8 @@
-import { Controller, Get, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthGuard } from '../auth/auth.guard';
+import { GetUser } from 'src/common/get-user.decorator';
+import { User } from 'src/common/types';
 
 @Controller('user')
 export class UserController {
@@ -8,7 +10,7 @@ export class UserController {
 
   @Get('/me')
   @UseGuards(AuthGuard)
-  async findOne(@Request() req) {
-    return await this.userService.findOne(req.user);
+  async findOne(@GetUser() user: User) {
+    return await this.userService.findOne(user);
   }
 }
