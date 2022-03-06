@@ -8,7 +8,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/signin')
-  async signin(@Body() body) {
+  async signin(@Body() body: { email: string }) {
     const production = isProd();
     const domain = process.env.API_ROOT_DOMAIN;
     const user =
@@ -31,7 +31,7 @@ export class AuthController {
     const loginHtmlContent = getLoginTemplate(
       domain,
       user.email,
-      `${domain}/?token=${newToken.token}`,
+      `${domain}/signin?token=${newToken.token}`,
     );
 
     production && (await sendMail(user.email, 'login', loginHtmlContent));
@@ -40,15 +40,11 @@ export class AuthController {
   }
 
   @Post('/getAuthToken')
-  async auth(@Query('token') token: string) {
-    const searchRegExp = /\s/g;
-    const replaceWith = '+';
-    const queryToken = token.replace(searchRegExp, replaceWith);
-
-    const jwt = await this.authService.getJwtToken({ token: queryToken });
+  async auth(@Body() body: { token: string }) {
+    const jwt = await this.authService.getJwtToken({ token: body.token });
 
     if (jwt) {
-      this.authService.deleteToken({ token: queryToken });
+      this.authService.deleteToken({ token: body.token });
     }
 
     return { authToken: jwt };
