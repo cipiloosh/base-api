@@ -10,9 +10,8 @@ export class AuthGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     try {
       const request = context.switchToHttp().getRequest();
-      const authHeader = request.headers.authorization;
-      const who =
-        authHeader && this.jwtService.verify(authHeader.replace('Bearer ', ''));
+      const authTokenFromCookie = request.cookies.authToken;
+      const who = authTokenFromCookie && this.jwtService.verify(authTokenFromCookie);
 
       if (!who) {
         return false;

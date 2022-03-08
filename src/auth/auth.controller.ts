@@ -1,7 +1,8 @@
-import { Controller, Post, Body, Query } from '@nestjs/common';
+import { Controller, Post, Body, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { sendMail, crypto, isProd } from '../utils';
 import { getLoginTemplate } from '../email-templates';
+import { FastifyReply } from 'fastify';
 
 @Controller('auth')
 export class AuthController {
@@ -40,13 +41,23 @@ export class AuthController {
   }
 
   @Post('/getAuthToken')
-  async auth(@Body() body: { token: string }) {
+  async auth(
+    @Body() body: { token: string },
+    @Res({ passthrough: true }) response: FastifyReply,
+  ) {
     const jwt = await this.authService.getJwtToken({ token: body.token });
 
     if (jwt) {
       this.authService.deleteToken({ token: body.token });
     }
-
+    jwt &&
+      response.setCookie('authToken', jwt, {
+        expires: new Date(Date.now() + 3600 * 2000 * 28 * 180 * 1),
+        httpOnly: true,
+        sameSite: 'strict',
+        secure: process.env.NODE_ENV === 'production',
+        path: '/',
+      });
     return { authToken: jwt };
   }
 }
