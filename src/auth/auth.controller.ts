@@ -49,8 +49,7 @@ export class AuthController {
 
     if (jwt) {
       this.authService.deleteToken({ token: body.token });
-    }
-    jwt &&
+
       response.setCookie('authToken', jwt, {
         expires: new Date(Date.now() + 3600 * 2000 * 28 * 180 * 1),
         httpOnly: true,
@@ -58,6 +57,7 @@ export class AuthController {
         secure: process.env.NODE_ENV === 'production',
         path: '/',
       });
+    }
     return { authToken: jwt };
   }
 }
