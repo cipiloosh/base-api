@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { fastifyHelmet } from 'fastify-helmet';
 import fastifyCookie from 'fastify-cookie';
 import {
   FastifyAdapter,
@@ -19,9 +20,9 @@ async function bootstrap() {
     new FastifyAdapter(),
   );
   app.enableCors(corsOptions);
-
-  app.register(fastifyCookie, {
-    secret: 'my-secret', // for cookies signature
+  await app.register(fastifyHelmet);
+  await app.register(fastifyCookie, {
+    secret: 'helloMoto',
   });
   await app.listen(5000);
 }
